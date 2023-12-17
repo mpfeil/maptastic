@@ -1,8 +1,20 @@
 import type { LatLngTuple } from "leaflet";
-import { MapContainer, TileLayer, Marker, Popup, GeoJSON } from "react-leaflet";
+import { useRef } from "react";
+import { MapContainer, TileLayer, GeoJSON, useMapEvent } from "react-leaflet";
+
+function SetViewOnLayerAdd({ animateRef, position }: { animateRef: any, position: LatLngTuple}) {
+  const map = useMapEvent('layeradd', (e) => {
+    map.setView(position, map.getZoom(), {
+      animate: animateRef.current || false,
+    })
+  })
+
+  return null
+}
 
 export function Map({ height, data, center }: { height: string, data: any, center: any }) {
-  const position: LatLngTuple = (center) ? [center.geometry.coordinates[1], center.geometry.coordinates[0]] : [52, 7];
+  const animateRef = useRef(true)
+  const position: LatLngTuple = (center) ? [center.geometry.coordinates[1], center.geometry.coordinates[0]] : [51.95, 7.6];
 
   return (
     <div style={{ height }}>
@@ -12,25 +24,20 @@ export function Map({ height, data, center }: { height: string, data: any, cente
         }}
         center={position}
         zoom={13}
-        scrollWheelZoom={false}
+        scrollWheelZoom={true}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {
-          data ? <GeoJSON key={data.name} data={data} eventHandlers={{
+          data ? <GeoJSON key={data.name}  data={data} eventHandlers={{
             click: (e) => {
               console.log('marker clicked', e)
             },
           }}/> : null
         }
-        
-        {/* <Marker position={position}>
-          <Popup>
-            A pretty CSS3 popup. <br /> Easily customizable.
-          </Popup>
-        </Marker> */}
+        <SetViewOnLayerAdd animateRef={animateRef} position={position} />
       </MapContainer>
     </div>
   );

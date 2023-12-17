@@ -9,6 +9,8 @@ import { z } from "zod";
 
 import { ClientOnly } from "~/components/client-only";
 import { Map } from "~/components/map.client";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 
 const schema = z.object({
   url: z.string({ required_error: 'URL is required' }).url()
@@ -39,10 +41,8 @@ export const action = async ({request}: ActionFunctionArgs) => {
     });
   }
 
-  console.log(result.data.url);
   const data = await fetch(result.data.url);
   const features = await data.json();
-  console.log(features)
 
   const featureCenter = center(features);
 
@@ -56,17 +56,15 @@ export const action = async ({request}: ActionFunctionArgs) => {
 export default function Index() {
   const mapHeight = "800px";
   const result = useActionData<typeof action>();
-  console.log(result);
   
   return (
-    <>
-      <Form method="post">
-        <div>
-          <label>Url</label>
-          <input type="url" name="url" defaultValue={result?.payload.url} />
+    <div className="w-full h-full">
+      <Form method="post" className="px-2 py-2">
+        <div className="flex w-full max-w-sm items-center space-x-2">
+          <Input type="url" placeholder="url" name="url" defaultValue={result?.payload.url} />
+          <Button type="submit">Load data</Button>
           <div>{result?.error?.url}</div>
         </div>
-        <button>Send</button>
       </Form>
       <ClientOnly
         fallback={
@@ -78,6 +76,6 @@ export default function Index() {
       >
         {() => <Map height={mapHeight} data={result?.features} center={result?.center} />}
       </ClientOnly>
-    </>
+    </div>
   );
 }
