@@ -20,10 +20,14 @@ export function DataTableToolbar<TData>({
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Filter tasks..."
-          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("title")?.setFilterValue(event.target.value)
+          placeholder="Filter..."
+        //   value={(table.getColumn("E_NAME")?.getFilterValue() as string) ?? ""}
+          onChange={(event) => {
+              if (event.target.value.includes('=')) {
+                const filterParts = event.target.value.split('=');
+                table.getColumn(filterParts[0])?.setFilterValue(filterParts[1]);
+              }
+            }
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />

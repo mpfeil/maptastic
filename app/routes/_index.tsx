@@ -71,21 +71,15 @@ export const action = async ({request}: ActionFunctionArgs) => {
 export default function Index() {
   const mapHeight = "800px";
   const result = useActionData<typeof action>();
-
-  console.log(result);
-  // const properties = jsonToZod(result?.features.features[0].properties);
-  // console.log(properties);
   
-  const test = z.object({});
+  const GeoJSONPropertiesSchema = z.object({});
   let columns: ColumnDef<any>[] = [];
-  // type JSONProperties =  z.infer<typeof test>;
 
 
-  let data = [];
+  let data: any = [];
   if (result && result.features && result.features.features) {
     for (let [key, value] of Object.entries(result?.features.features[0].properties)) {
-      console.log(key, typeof value);
-      test.extend({
+      GeoJSONPropertiesSchema.extend({
         [`${key}`]: typeof value === "string" ? z.string() : typeof value === "number" ? z.number() : z.null()
       })
       columns.push({
@@ -95,9 +89,6 @@ export default function Index() {
     }
     result?.features?.features?.map((entry: any) => data.push(entry.properties));
   }
-  console.log("data:" ,data)
-
-  
   
   return (
     <div className="flex flex-col w-full overflow-hidden">
@@ -120,7 +111,7 @@ export default function Index() {
           {() => <div className="w-1/2"><Map height={mapHeight} data={result?.features} center={result?.center} /></div>}
         </ClientOnly>
         <div className="w-1/2 max-h-[800px] overflow-auto">
-          {columns && data ? <DataTable columns={columns} data={data} /> : null}
+          {columns && columns.length > 0 && data ? <DataTable columns={columns} data={data} /> : null}
         </div>
       </div>
     </div>
