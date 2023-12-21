@@ -119,7 +119,7 @@ export default function Index() {
         >
           {() => <div className="w-1/2"><Map height={mapHeight} data={result?.features} center={result?.center} /></div>}
         </ClientOnly>
-        <div className="w-1/2 min-h-[350px] overflow-auto">
+        <div className="w-1/2 max-h-[800px] overflow-auto">
           {columns && data ? <DataTable columns={columns} data={data} /> : null}
         </div>
       </div>

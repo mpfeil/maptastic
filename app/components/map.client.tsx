@@ -23,7 +23,7 @@ export function Map({ height, data, center }: { height: string, data: any, cente
           height: "100%",
         }}
         center={position}
-        zoom={13}
+        zoom={12}
         scrollWheelZoom={true}
       >
         <TileLayer
